@@ -1,0 +1,7 @@
+/.idea/
+/pretrained/
+/save_models/
+/test_images/
+/total_images/
+**/__pycache__/
+**/*.pth
