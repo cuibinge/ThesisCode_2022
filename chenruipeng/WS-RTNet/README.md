@@ -20,6 +20,12 @@ data
     │   ├── superpixel
     └── train.txt
 ```
+## 环境依赖
+
+    --使用以下命令创建conda依赖环境:
+    ```bash
+    conda env create -f env.yaml
+    ```
 
 ## 开始
 
@@ -43,7 +49,7 @@ data
 - 进入文件夹 ```<segmentation>```:
 
     ```bash
-    cd Segmentation
+    cd segmentation
     ```
 
 - 为训练集创建标签文件夹，并将伪标签放入其中:
@@ -57,9 +63,9 @@ data
     ```bash
     python train.py
     ```
+### Step 3: 模型测试和精度评估(测试前请准备赤潮测试集)
 
-- 模型测试和精度评估(测试前请准备赤潮测试集):
-
+    在segmentation文件夹下
     ```bash
     python predict.py
     ```
