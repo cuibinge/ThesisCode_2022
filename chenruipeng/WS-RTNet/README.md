@@ -65,7 +65,7 @@ conda env create -f env.yaml
     ```
 ### Step 3: 模型测试和精度评估(测试前请准备赤潮测试集)
 
-    在segmentation文件夹下
-    ```bash
-    python predict.py
+在segmentation文件夹下
+```bash
+python predict.py
     ```
