@@ -4,7 +4,9 @@
 ## 数据准备
 
 弱监督赤潮数据集路径: **浪潮服务器/chenruipeng/weakly/WRTNet/WRTNet/data**
+
 resnet预训练权重: **浪潮服务器/chenruipeng/weakly/WRTNet/WRTNet/resnet.pth**
+
 数据集结构:
 
 ```
