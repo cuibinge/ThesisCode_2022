@@ -68,4 +68,4 @@ conda env create -f env.yaml
 在segmentation文件夹下
 ```bash
 python predict.py
-    ```
+```
