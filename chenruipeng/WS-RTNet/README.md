@@ -22,10 +22,10 @@ data
 ```
 ## 环境依赖
 
-    --使用以下命令创建conda依赖环境:
-    ```bash
-    conda env create -f env.yaml
-    ```
+--使用以下命令创建conda依赖环境:
+```bash
+conda env create -f env.yaml
+```
 
 ## 开始
 
