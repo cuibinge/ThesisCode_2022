@@ -1,0 +1,23 @@
+
+            Evaluation Report
+            ==================
+
+            Overall Accuracy (OA): 0.9989
+            Average Accuracy (AA): 0.9937
+            Kappa Coefficient: 0.9985
+
+            Class-wise Accuracy:
+            Class 1: 1.0000
+Class 2: 0.9990
+Class 3: 0.9681
+Class 4: 1.0000
+Class 5: 1.0000
+Class 6: 0.9952
+
+Confusion Matrix:
+[[2905    0    0    0    0    0]
+ [   0 2088    0    0    0    2]
+ [   3    0  334    0    0    8]
+ [   0    0    0 6569    0    0]
+ [   0    0    0    0 7561    0]
+ [   0   11    0    0    0 2274]]
