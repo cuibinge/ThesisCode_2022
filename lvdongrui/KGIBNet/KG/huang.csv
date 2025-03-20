@@ -1,0 +1,27 @@
+﻿head,relation,tail
+Cloud,approaches,Sea
+Sparse vegetation,approaches,Tidal flat
+Sparse vegetation,approaches,Tamarix
+Sparse vegetation,approaches,Spartina alterniflora
+Sparse vegetation,approaches,Reed
+Reed,approaches,Pond
+Reed,approaches,Tamarix
+Yellow River,approaches,Reed
+Spartina alterniflora,approaches,Cloud
+Spartina alterniflora,approaches,Sea
+Tidal flat,approaches,Pond
+Seagrass bed,approaches,Sea
+Seagrass bed,approaches,Spartina alterniflora
+Seagrass bed,distances,Yellow River
+Seagrass bed,distances,Pond
+Pond,distances,Cloud
+Pond,distances,Sea
+Tamarix,distances,Sea
+Tamarix,distances,Cloud
+Tamarix,distances,Seagrass bed
+Tidal flat,distances,Cloud
+Sea,distances,Yellow River
+Reed,distances,Seagrass bed
+Sea,distances,Reed
+Spartina alterniflora,distances,Pond
+Sparse vegetation,distances,Seagrass bed
