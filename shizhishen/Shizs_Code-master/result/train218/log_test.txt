@@ -1,0 +1,25 @@
+================ (Fri Mar 28 11:30:36 2025) ================
+gpu_ids: [] project_name: train218 print_models: False is_val: True num_workers: 4 dataset: CDDataset data_name: Glacier batch_size: 1 split: vis img_size: 256 n_class: 2 net_G: VPGCD-Net checkpoint_name: best_ckpt.pt checkpoint_dir: weights\train218 vis_dir: result\train218 loading last checkpoint...
+Eval Historical_best_acc = 0.8325 (at epoch 1)
+
+Begin evaluation...
+Is_training: False. [0,18],  running_mf1: 0.84016
+Is_training: False. [1,18],  running_mf1: 0.82157
+Is_training: False. [2,18],  running_mf1: 0.81303
+Is_training: False. [3,18],  running_mf1: 0.80125
+Is_training: False. [4,18],  running_mf1: 0.81711
+Is_training: False. [5,18],  running_mf1: 0.75239
+Is_training: False. [6,18],  running_mf1: 0.74383
+Is_training: False. [7,18],  running_mf1: 0.85989
+Is_training: False. [8,18],  running_mf1: 0.82420
+Is_training: False. [9,18],  running_mf1: 0.82332
+Is_training: False. [10,18],  running_mf1: 0.83009
+Is_training: False. [11,18],  running_mf1: 0.76334
+Is_training: False. [12,18],  running_mf1: 0.77168
+Is_training: False. [13,18],  running_mf1: 0.82722
+Is_training: False. [14,18],  running_mf1: 0.60581
+Is_training: False. [15,18],  running_mf1: 0.81521
+Is_training: False. [16,18],  running_mf1: 0.87923
+Is_training: False. [17,18],  running_mf1: 0.86051
+acc: 0.83134 miou: 0.68881 mf1: 0.81281 iou_0: 0.77258 iou_1: 0.60503 F1_0: 0.87170 F1_1: 0.75392 precision_0: 0.94061 precision_1: 0.66103 recall_0: 0.81220 recall_1: 0.87717 
+
