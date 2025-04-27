@@ -8,12 +8,11 @@ print(torch.cuda.is_available())
 the main function for training the CD networks
 """
 
-
+# 定义模型，调用训练阶段函数
 def train(args):
     dataloaders = utils.get_loaders(args)
     model = CDTrainer(args=args, dataloaders=dataloaders)
     model.train_models()
-
 
 def test(args):
     from models.evaluator import CDEvaluator
