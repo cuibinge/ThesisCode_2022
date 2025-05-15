@@ -4,7 +4,6 @@ from typing import Tuple
 import torch
 from torch import nn
 from torch.nn import functional as F
-
 from detectron2.config import configurable
 from detectron2.data import MetadataCatalog
 from detectron2.modeling import META_ARCH_REGISTRY, build_backbone, build_sem_seg_head
