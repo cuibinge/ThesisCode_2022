@@ -74,7 +74,7 @@ def run(args):
             refine_classifier.module.update(local_proto.detach())
             global_proto = refine_classifier.module.prototype
 
-            # prototype re-activation
+            # prototype re-activation 5.15
             pos_feat_norm = F.normalize(pos_feat.permute(0, 2, 3, 1).contiguous().view(-1, c), p=2, dim=1)
             cos_sim = pos_feat_norm @ local_proto.t()
             cos_sim = cos_sim.view(b, 1, h, w)
