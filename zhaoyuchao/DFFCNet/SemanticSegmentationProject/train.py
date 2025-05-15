@@ -1,7 +1,7 @@
 from torch.autograd import Variable
 import argparse
 from datetime import datetime
-from lib.dffcnet_model import DFFCNet
+from lib.clcformer_model import CLCFormer
 from utils.dataloader import *
 from utils.utils import *
 import torch.nn.functional as F
@@ -12,7 +12,18 @@ from torch.optim import lr_scheduler
 import torch.backends.cudnn as cudnn
 import random
 from optimezer_looka import Lookahead
+import torch
+import matplotlib.pyplot as plt
+# 启用或禁用 cuDNN 的基准模式
+torch.backends.cudnn.benchmark = True
 
+# 启用或禁用 cuDNN 的确定性模式
+torch.backends.cudnn.deterministic = True
+import sys
+
+
+# # 重定向输出到文件
+# sys.stdout = open('./savelianyungang/train_output_jiaozhou.txt', 'w')
 
 def structure_loss(pred, mask):
     weit = 1 + 5*torch.abs(F.avg_pool2d(mask, kernel_size=31, stride=1, padding=15) - mask)
@@ -38,6 +49,8 @@ def structure_loss(pred, mask):
 def train(train_loader, model, optimizer, epoch, best_iou):
     model.train()
     loss_record2, loss_record3, loss_record4,loss_record1 = AvgMeter(), AvgMeter(), AvgMeter(),AvgMeter()
+#     新增记录每个损失变化0607    
+    epoch_losses = {"loss1": [], "loss2": [], "loss3": [], "loss4": []}
     accum = 0
     for i, (img_file_name,inputs,pack) in enumerate(tqdm(train_loader)):
         # ---- data prepare ----
@@ -57,8 +70,15 @@ def train(train_loader, model, optimizer, epoch, best_iou):
         loss1 = structure_loss(lateral_map_1, gts)
 
         loss = loss1*0.4 + 0.3 * loss2 + 0.15 * loss3 + 0.15 * loss4
+#         # 更新损失记录0607
+#         epoch_losses["loss1"].append(loss1.item())
+#         epoch_losses["loss2"].append(loss2.item())
+#         epoch_losses["loss3"].append(loss3.item())
+#         epoch_losses["loss4"].append(loss4.item())
 
-
+#         # 在每个epoch结束时打印平均损失
+#         print("Epoch {:03d} Average Losses - Lateral-1: {:.4f}, Lateral-2: {:.4f}, Lateral-3: {:.4f}, Lateral-4: {:.4f}".format(epoch, np.mean(epoch_losses["loss1"]), np.mean(epoch_losses["loss2"]), np.mean(epoch_losses["loss3"]), np.mean(epoch_losses["loss4"])))
+        
         # ---- backward ----
         loss.backward() 
         torch.nn.utils.clip_grad_norm_(model.parameters(), opt.grad_norm)
@@ -73,12 +93,24 @@ def train(train_loader, model, optimizer, epoch, best_iou):
         loss_record1.update(loss1.data, opt.batchsize)
 
         # ---- train visualization ----
+#         if i % 20 == 0 or i == total_step:
+#             print('{} Epoch [{:03d}/{:03d}], Step [{:04d}/{:04d}], '
+#                   '[lateral-2: {:.4f}, lateral-3: {:0.4f}, lateral-4: {:0.4f}]'.
+#                   format(datetime.now(), epoch, opt.epoch, i, total_step,
+#                          loss_record2.show(), loss_record3.show(), loss_record4.show(),loss_record1.show()))
         if i % 20 == 0 or i == total_step:
             print('{} Epoch [{:03d}/{:03d}], Step [{:04d}/{:04d}], '
-                  '[lateral-2: {:.4f}, lateral-3: {:0.4f}, lateral-4: {:0.4f}]'.
+                  '[lateral-1: {:.4f}, lateral-2: {:.4f}, lateral-3: {:.4f}, lateral-4: {:.4f}]'.
                   format(datetime.now(), epoch, opt.epoch, i, total_step,
-                         loss_record2.show(), loss_record3.show(), loss_record4.show(),loss_record1.show()))
+                         loss_record1.show(), loss_record2.show(), loss_record3.show(), loss_record4.show()))
+#     0607添加
+    # Calculate test results after the epoch
+#     test_loss, dice, iou, acc = evaluate(model, test_loader)
+# Log and print results
+    epoch_info = f"Epoch {epoch:03d} Average Losses - Lateral-1: {loss_record1.avg:.4f}, Lateral-2: {loss_record2.avg:.4f}, Lateral-3: {loss_record3.avg:.4f}, Lateral-4: {loss_record4.avg:.4f}\n"
 
+    
+    
     save_path = 'snapshots/{}/'.format(opt.train_save)
     os.makedirs(save_path, exist_ok=True)
     if (epoch+1) % 1 == 0:
@@ -86,12 +118,25 @@ def train(train_loader, model, optimizer, epoch, best_iou):
         if meanIOU > best_iou:
             print('new best iou: ', meanIOU)
             best_iou = meanIOU
-            torch.save(model.state_dict(), save_path + 'DFFCNet-%d.pth' % epoch)
-            print('[Saving Snapshot:]', save_path + 'DFFCNet-%d.pth'% epoch)
+            torch.save(model.state_dict(), save_path + 'CLCFormer-%d.pth' % epoch)
+            print('[Saving Snapshot:]', save_path + 'CLCFormer-%d.pth'% epoch)
         if (epoch) % 5 == 0:
-            torch.save(model.state_dict(), save_path + 'DFFCNet-%d.pth' % epoch)
-            print('[Saving Snapshot:]', save_path + 'DFFCNet-%d.pth'% epoch)
-    return best_iou
+            torch.save(model.state_dict(), save_path + 'CLCFormer-%d.pth' % epoch)
+            print('[Saving Snapshot:]', save_path + 'CLCFormer-%d.pth'% epoch)
+            
+        # 在train函数内部
+    losses = []
+    ious = []
+
+    # 在你的损失记录和IOU计算逻辑后添加
+    losses.append(loss.item())  # 记录损失
+    ious.append(meanIOU)        # 记录IOU
+
+    # 将这些记录传递回主函数
+    return best_iou, losses, ious
+
+
+#     return best_iou
 
 
 def test(model, test_data):
@@ -146,13 +191,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--epoch', type=int, default=50, help='epoch number')
     parser.add_argument('--lr', type=float, default=1e-4, help='learning rate')  ###
-    parser.add_argument('--batchsize', type=int, default=8, help='training batch size')
+    parser.add_argument('--batchsize', type=int, default=2, help='training batch size')
     parser.add_argument('--grad_norm', type=float, default=2.0, help='gradient clipping norm')
     parser.add_argument('--train_path', type=str,
-                        default='./WHU_bulding/train', help='path to train dataset')
+                        default='./dataset/testdata/train', help='path to train dataset')
     parser.add_argument('--valid_path', type=str,
-                        default='./WHU_bulding/val/image', help='path to valid dataset')
-    parser.add_argument('--train_save', type=str, default='./save_model')
+                        default='./dataset/testdata/val/image', help='path to valid dataset')
+    parser.add_argument('--train_save', type=str, default='./save_model_test')
     parser.add_argument('--beta1', type=float, default=0.9, help='beta1 of adam optimizer')
     parser.add_argument('--beta2', type=float, default=0.999, help='beta2 of adam optimizer')
 
@@ -167,7 +212,9 @@ if __name__ == '__main__':
     torch.cuda.manual_seed(1234)
 
     # ---- build models ----
-    model = DFFCNet(pretrained=True).cuda()
+#     0606加载预训练模型
+    model = CLCFormer(pretrained=True).cuda()
+    
 
     params = model.parameters()
     base_optimizer = torch.optim.AdamW(params, opt.lr, betas=(opt.beta1, opt.beta2))
@@ -190,3 +237,28 @@ if __name__ == '__main__':
     for epoch in range(1, opt.epoch + 1):
         best_loss = train(train_loader, model, optimizer, epoch, best_iou)
         scheduler.step()
+        
+    for epoch in range(num_epochs):
+        train(train_loader, model, optimizer, epoch, best_iou, test_loader)
+        
+    # 在主函数中接收这些值
+    best_iou, epoch_losses, epoch_ious = train(train_loader, model, optimizer, epoch, best_iou)
+
+    # 在主函数的最后添加绘图代码
+    plt.figure(figsize=(10, 5))
+    plt.subplot(1, 2, 1)
+    plt.plot(epoch_losses, label='Loss')
+    plt.title('Loss vs Epochs')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+
+    plt.subplot(1, 2, 2)
+    plt.plot(epoch_ious, label='IOU', color='r')
+    plt.title('IOU vs Epochs')
+    plt.xlabel('Epoch')
+    plt.ylabel('IOU')
+    plt.legend()
+
+    plt.savefig('training_metrics.png')
+    plt.show()
